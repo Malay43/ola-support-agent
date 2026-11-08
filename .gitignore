@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 setup_log.txt
 run_all_log.txt
+CLAUDE.md
