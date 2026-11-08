@@ -1,0 +1,57 @@
+====================================================================================================
+PART 2 - Task 9: structured output schema (SupportAnswer)
+====================================================================================================
+{
+ "answer": {
+  "minLength": 1,
+  "title": "Answer",
+  "type": "string"
+ },
+ "sources": {
+  "description": "KB document ids used",
+  "items": {
+   "type": "string"
+  },
+  "title": "Sources",
+  "type": "array"
+ },
+ "ticket": {
+  "anyOf": [
+   {
+    "$ref": "#/$defs/TicketInfo"
+   },
+   {
+    "type": "null"
+   }
+  ],
+  "default": null
+ },
+ "escalation_recommended": {
+  "default": false,
+  "title": "Escalation Recommended",
+  "type": "boolean"
+ },
+ "grounded": {
+  "default": true,
+  "title": "Grounded",
+  "type": "boolean"
+ },
+ "needs_clarification": {
+  "default": false,
+  "title": "Needs Clarification",
+  "type": "boolean"
+ },
+ "confidence": {
+  "default": 0.0,
+  "maximum": 1.0,
+  "minimum": 0.0,
+  "title": "Confidence",
+  "type": "number"
+ }
+} ...
+
+VALID  {"answer":"Goodwill compensation for a poor experience is capped at 300 rupees per ticket and is paid as ride credit, never as cash.","sources":["kb-04","kb-11","kb-08"],"ticket":null,"escalation_recommended":false,"grounded":true
+VALID  {"answer":"Ticket TKT-0007 is currently Closed (resolution time 74.6 hours). Its escalation score is 0.3067 (threshold 0.39), so no escalation is needed right now.","sources":[],"ticket":{"record_id":"TKT-0007","status":"Closed","
+VALID  {"answer":"I don't know - I couldn't find that in the support knowledge base.","sources":[],"ticket":null,"escalation_recommended":false,"grounded":false,"needs_clarification":false,"confidence":0.0}
+
+INVALID payload correctly rejected: ValidationError: 2 validation errors for SupportAnswer

@@ -1,0 +1,20 @@
+====================================================================================================
+PART 4 - Task 15: four-layer governance (least autonomy, risk, budget)
+====================================================================================================
+Tool policy: {'check_support_ticket_status': ['Lookup Agent'], 'rag_lookup': ['Retrieval Agent']}
+  wiring check_support_ticket_status to 'Retrieval Agent': BLOCKED -> Least-autonomy violation: agent 'Retrieval Agent' may not hold tool 'check_support_ticket_status' (allowed: ['Lookup Agent']).
+  wiring check_support_ticket_status to 'Response Composer': BLOCKED -> Least-autonomy violation: agent 'Response Composer' may not hold tool 'check_support_ticket_status' (allowed: ['Lookup Agent']).
+  wiring check_support_ticket_status to 'Lookup Agent': ALLOWED
+  agents actually holding the lookup tool in the live crew: ['Lookup Agent']
+
+Guard explanation: every agent is created through make_agent(), which calls governance.assert_tool_allowed(role, tool_name) for each tool BEFORE building the Agent; the policy table allows check_support_ticket_status only for 'Lookup Agent', so any other wiring raises PermissionError and the crew cannot even be constructed with a violating configuration.
+
+Risk classification: Medium
+I classify this system as MEDIUM risk. It is a customer-support assistant that answers policy questions and reads ticket status, which the scheme lists under 'customer support tickets' (Medium), not under summarisation (Low). It is not High: it handles no medical data, makes no hiring decision and touches no financial account - it cannot issue refunds or change a ticket, it only reads one record and quotes policy. The residual risks are a wrong or ungrounded answer and leakage of a phone number, and both are controlled by the retrieval-similarity groundedness gate, the Autogen review stage, input-side PII masking (also applied before logging), prompt-injection detection, a per-request token budget, and a read-only tool that only the Lookup Agent may hold.
+
+Runtime budget: cap = 6000 tokens/request ($0.0120)
+  normal request  -> blocked=False, used 3437 tokens ($0.006874)
+  oversized input (30,800 chars) -> blocked=True reason=budget_exceeded
+    Request rejected: ~7700 input tokens exceeds the per-request budget of 6000 tokens (cap $0.0120).
+  tight mid-request cap (800 tokens) -> blocked=True reason=budget_exceeded
+    Budget exceeded mid-request: 2074 tokens used > cap 800.

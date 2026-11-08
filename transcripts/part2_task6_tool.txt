@@ -1,0 +1,10 @@
+====================================================================================================
+PART 2 - Task 6: check_support_ticket_status + designed escalation_score
+====================================================================================================
+escalation_score = 0.6 * escalated + 0.4 * (days_since_created / 30), always in [0, 1]. Recommend escalation when score >= 0.39: this is the 80th percentile of the scores over my 60 generated tickets, so 11 of 60 tickets (18%) are above it, i.e. only the top fifth of the queue is escalated. In practice every ticket already flagged `escalated` (score >= 0.6) is recommended for escalation, and an unflagged ticket is recommended only when it is at least 30 days old. 
+
+TKT-0009 -> {"found": true, "record_id": "TKT-0009", "status": "Escalated", "resolution_time_hours": 12.0, "escalation_score": 0.6533, "recommend_escalation": true, "threshold": 0.39}
+TKT-0002 -> {"found": true, "record_id": "TKT-0002", "status": "Closed", "resolution_time_hours": 4.8, "escalation_score": 0.0267, "recommend_escalation": false, "threshold": 0.39}
+TKT-9999 -> {"found": false, "record_id": "TKT-9999", "error": "No ticket with id TKT-9999"}
+
+score distribution: min=0.0 median=0.2267 p80=0.39 max=1.0

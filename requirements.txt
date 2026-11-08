@@ -1,0 +1,12 @@
+# Tested together on Python 3.12 (crewai needs 3.10-3.13). Install via setup.sh (see the protobuf note there).
+crewai==1.15.28
+chromadb==1.5.9
+fastapi==0.161.1
+uvicorn[standard]
+httpx
+websockets
+langchain-core==1.7.0
+pydantic>=2.12
+numpy>=1.26
+sentence-transformers
+pytest

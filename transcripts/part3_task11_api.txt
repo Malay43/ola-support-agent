@@ -1,0 +1,18 @@
+====================================================================================================
+PART 3 - Task 11: FastAPI (HTTP + WebSocket, survives disconnect)
+====================================================================================================
+GET /health -> {'status': 'ok', 'mock_llm': True, 'embedder': 'sentence-transformers/all-MiniLM-L6-v2', 'deployed_collection': 'sentence', 'documents': 12}
+POST /ask -> 200 {"trace_id": "93e8ff96aeb347ac", "answer": "Resolved ticket records are kept in the support system for 24 months and are then permanently deleted.", "blocked": false, "block_reason": null, "sources": ["kb-12"], "ticket": null, "escalation_recommended": false, "grounded": true, "review_approved": tru
+POST /add-document -> 200 {'trace_id': '06aa9cb619534faf', 'doc_id': 'kb-13', 'chunks_indexed': 4}
+POST /ask (new doc) -> 200 {"trace_id": "9b185804ece54660", "answer": "The rider pays a 150 rupee retrieval fee for a lost item. Items left behind in a vehicle are logged as lost-item tickets.", "blocked": false, "block_reason": null, "sources": ["kb-13"], "ticket": null, "escalation_recommended": false, "grounded": true, "re
+POST /ask (validation error) -> 422
+
+WebSocket multi-turn:
+  WS> What is the status of ticket TKT-0003?
+  WS< Ticket TKT-0003 is currently In Progress (resolution time 6.5 hours). Its escalation score is 0.2533 (threshold 0.39), so no escalation is n
+  WS> Should it be escalated?
+  WS< Ticket TKT-0003 is currently In Progress (resolution time 6.5 hours). Its escalation score is 0.2533 (threshold 0.39), so no escalation is n
+  (client closed the socket)
+  (client dropped mid-conversation without reading the reply)
+  new client after the drops -> A banner appears in the app and a status message is posted within 30 minutes, and updates follow eve
+  server still healthy -> 200

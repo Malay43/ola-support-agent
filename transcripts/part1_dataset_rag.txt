@@ -1,0 +1,149 @@
+====================================================================================================
+PART 1 - Tasks 1-5: dataset, knowledge base, chunking, grounded generation, P/R
+====================================================================================================
+[embedder] sentence-transformers/all-MiniLM-L6-v2
+
+=== TASK 1: dataset ===
+SUPPORT_TICKETS: 60 records (seed=13)
+Count per category:
+  Billing           14
+  Technical Issue   13
+  Account Access    11
+  Product Defect    10
+  General Inquiry   12
+Count per status:
+  Open              6
+  In Progress       14
+  Escalated         10
+  Resolved          20
+  Closed            10
+escalated=True: 18.3%  (required band 10.0-30.0%)
+
+=== TASK 3: chunking + indexing (two separate ChromaDB collections) ===
+  collection[fixed]: 24 chunks from 12 documents
+  collection[sentence]: 53 chunks from 12 documents
+  sample query on [fixed] -> kb-03::fixed::0 (cos=0.597): Tickets move up through three tiers of support. A Tier 1 agent escalates to a Tier 2 speci...
+  sample query on [sentence] -> kb-08::sentence::1 (cos=0.673): A ticket that breaches its SLA earns a credit of 50 rupees for P3, 100 rupees for P2, and ...
+
+=== TASK 4: threshold calibration (measured, not a preset) ===
+  [fixed] in-scope top-1 cosines:
+      0.685  How fast must we reply to a P1 ticket?
+      0.807  When should a Tier 1 agent escalate a ticket to Tier 2?
+      0.692  How long does a refund to the original payment method take?
+      0.441  Can an agent offer a phone callback to a customer?
+      0.475  Is night support available on public holidays?
+      0.628  What happens if a customer raises the same complaint again within two weeks?
+      0.656  How much service credit does a customer get when the SLA is breached?
+      0.709  How long does the satisfaction survey stay open after a ticket is resolved?
+      0.719  How are VIP customer tickets prioritised?
+      0.596  How often are outage updates posted?
+      0.772  How long are resolved tickets kept before deletion?
+      0.720  How is a ticket classified as P1 priority?
+      0.503  What is the compensation cap for a poor experience?
+  [fixed] out-of-scope top-1 cosines:
+      0.116  What is the capital of Australia?
+      0.016  Give me a recipe for paneer butter masala.
+      0.119  Who won the cricket world cup in 2011?
+      0.046  How do I train a neural network in PyTorch?
+  [fixed] min(in-scope)=0.441  max(out-of-scope)=0.119  separable=True  -> threshold=0.28
+  [sentence] in-scope top-1 cosines:
+      0.795  How fast must we reply to a P1 ticket?
+      0.823  When should a Tier 1 agent escalate a ticket to Tier 2?
+      0.782  How long does a refund to the original payment method take?
+      0.554  Can an agent offer a phone callback to a customer?
+      0.448  Is night support available on public holidays?
+      0.652  What happens if a customer raises the same complaint again within two weeks?
+      0.582  How much service credit does a customer get when the SLA is breached?
+      0.624  How long does the satisfaction survey stay open after a ticket is resolved?
+      0.592  How are VIP customer tickets prioritised?
+      0.480  How often are outage updates posted?
+      0.799  How long are resolved tickets kept before deletion?
+      0.656  How is a ticket classified as P1 priority?
+      0.549  What is the compensation cap for a poor experience?
+  [sentence] out-of-scope top-1 cosines:
+      0.119  What is the capital of Australia?
+      0.094  Give me a recipe for paneer butter masala.
+      0.153  Who won the cricket world cup in 2011?
+      0.070  How do I train a neural network in PyTorch?
+  [sentence] min(in-scope)=0.448  max(out-of-scope)=0.153  separable=True  -> threshold=0.301
+
+=== TASK 5: precision/recall per collection (document level, k=3) ===
+
+  -- collection[fixed] --
+  Q: How fast must we reply to a P1 ticket?
+     relevant=['kb-02'] retrieved_docs=['kb-02', 'kb-10']
+     precision = 1/2 = 0.50   recall = 1/1 = 1.00
+  Q: When should a Tier 1 agent escalate a ticket to Tier 2?
+     relevant=['kb-03'] retrieved_docs=['kb-03', 'kb-10']
+     precision = 1/2 = 0.50   recall = 1/1 = 1.00
+  Q: How long does a refund to the original payment method take?
+     relevant=['kb-04'] retrieved_docs=['kb-04', 'kb-11', 'kb-09']
+     precision = 1/3 = 0.33   recall = 1/1 = 1.00
+  Q: Can an agent offer a phone callback to a customer?
+     relevant=['kb-05'] retrieved_docs=['kb-05', 'kb-10', 'kb-11']
+     precision = 1/3 = 0.33   recall = 1/1 = 1.00
+  Q: Is night support available on public holidays?
+     relevant=['kb-06'] retrieved_docs=['kb-06', 'kb-11']
+     precision = 1/2 = 0.50   recall = 1/1 = 1.00
+  Q: What happens if a customer raises the same complaint again within two weeks?
+     relevant=['kb-07'] retrieved_docs=['kb-11', 'kb-07']
+     precision = 1/2 = 0.50   recall = 1/1 = 1.00
+  Q: How much service credit does a customer get when the SLA is breached?
+     relevant=['kb-02', 'kb-08'] retrieved_docs=['kb-08', 'kb-11']
+     precision = 1/2 = 0.50   recall = 1/2 = 0.50
+  Q: How long does the satisfaction survey stay open after a ticket is resolved?
+     relevant=['kb-09'] retrieved_docs=['kb-09', 'kb-02']
+     precision = 1/2 = 0.50   recall = 1/1 = 1.00
+  macro precision=0.458 recall=0.938 F1=0.616
+
+  -- collection[sentence] --
+  Q: How fast must we reply to a P1 ticket?
+     relevant=['kb-02'] retrieved_docs=['kb-02']
+     precision = 1/1 = 1.00   recall = 1/1 = 1.00
+  Q: When should a Tier 1 agent escalate a ticket to Tier 2?
+     relevant=['kb-03'] retrieved_docs=['kb-03', 'kb-01']
+     precision = 1/2 = 0.50   recall = 1/1 = 1.00
+  Q: How long does a refund to the original payment method take?
+     relevant=['kb-04'] retrieved_docs=['kb-04', 'kb-11']
+     precision = 1/2 = 0.50   recall = 1/1 = 1.00
+  Q: Can an agent offer a phone callback to a customer?
+     relevant=['kb-05'] retrieved_docs=['kb-05']
+     precision = 1/1 = 1.00   recall = 1/1 = 1.00
+  Q: Is night support available on public holidays?
+     relevant=['kb-06'] retrieved_docs=['kb-06']
+     precision = 1/1 = 1.00   recall = 1/1 = 1.00
+  Q: What happens if a customer raises the same complaint again within two weeks?
+     relevant=['kb-07'] retrieved_docs=['kb-07', 'kb-11', 'kb-04']
+     precision = 1/3 = 0.33   recall = 1/1 = 1.00
+  Q: How much service credit does a customer get when the SLA is breached?
+     relevant=['kb-02', 'kb-08'] retrieved_docs=['kb-08', 'kb-11']
+     precision = 1/2 = 0.50   recall = 1/2 = 0.50
+  Q: How long does the satisfaction survey stay open after a ticket is resolved?
+     relevant=['kb-09'] retrieved_docs=['kb-09', 'kb-12']
+     precision = 1/2 = 0.50   recall = 1/1 = 1.00
+  macro precision=0.667 recall=0.938 F1=0.779
+
+  Recommendation: I would deploy the sentence-chunk collection: it scored macro precision 0.67 / recall 0.94 (F1 0.78) versus 0.46 / 0.94 (F1 0.62) for the fixed-chunk collection on the same 8 queries at k=3. Whole-sentence chunks keep each fact self-contained, which keeps retrieved context clean.
+
+=== TASK 4: grounded generation on the deployed [sentence] collection ===
+  Q: How fast must we reply to a P1 ticket?
+     top1=0.795 grounded=True sources=['kb-02']
+     A: A P1 ticket gets a first response within 15 minutes and a resolution target of 4 hours, around the clock.
+  Q: When should a Tier 1 agent escalate a ticket to Tier 2?
+     top1=0.823 grounded=True sources=['kb-03', 'kb-01']
+     A: A Tier 1 agent escalates to a Tier 2 specialist when a ticket is still open after 80 percent of its SLA window has passed, or when the customer asks to speak to a supervisor. Tier 2 escalates to the duty manager for any P1 ticket, any suspected fraud, or any compensation request above 2,000 rupees.
+  Q: How long does a refund to the original payment method take?
+     top1=0.782 grounded=True sources=['kb-04', 'kb-11']
+     A: A refund for a wrongly charged fare goes back to the original payment method within 5 to 7 business days after approval.
+  Q: Can an agent offer a phone callback to a customer?
+     top1=0.554 grounded=True sources=['kb-05']
+     A: Phone callbacks are offered only for P1 and P2 tickets, or when a customer cannot use the app.
+  Q: Is night support available on public holidays?
+     top1=0.448 grounded=True sources=['kb-06']
+     A: Live chat and phone support run from 6 AM to 11 PM IST every day of the year, including national holidays. On public holidays the SLA clock is paused for P3 and P4 tickets, while the clocks for P1 and P2 tickets keep running.
+  Q: What happens if a customer raises the same complaint again within two weeks?
+     top1=0.652 grounded=True sources=['kb-07', 'kb-11', 'kb-04']
+     A: A repeat complaint is a new ticket about the same issue raised within 14 days of an earlier ticket on that topic.
+  Q (out of scope): What is the capital of Australia?
+     top1=0.119 grounded=False
+     A: I don't know - I couldn't find that in the support knowledge base.

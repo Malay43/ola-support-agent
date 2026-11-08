@@ -1,0 +1,7 @@
+====================================================================================================
+PART 4 - Task 16: response cache (keyed by normalized query text)
+====================================================================================================
+call 1 (miss) : cache_hit=False  10.58 ms  retrieval_calls +1  generation_calls +1
+call 2 (hit)  : cache_hit=True  0.01 ms  retrieval_calls +0  generation_calls +0
+(call 2 used differently-cased/punctuated text: normalized key = 'sentence::what is the compensation cap for a poor experience')
+answer identical: True

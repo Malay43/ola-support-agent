@@ -1,0 +1,10 @@
+====================================================================================================
+PART 3 - Task 12: structured JSON-Lines logging
+====================================================================================================
+17 log entries in requests.jsonl; every entry has a trace_id: True
+{"trace_id": "ed7608d7b1404060", "endpoint": "/ws/chat", "session_id": "ws-e8af59e2", "question": "How fast must we reply to a P1 ticket?", "outcome": "answered", "grounded": true, "sources": ["kb-02"], "guard_fired": false, "review_approved": true, "pii_maske
+{"trace_id": "970e25e1e01d4faf", "endpoint": "/ws/chat", "session_id": "ws-e52fc58a", "question": "How often are updates posted during an outage?", "outcome": "answered", "grounded": true, "sources": ["kb-11"], "guard_fired": false, "review_approved": true, "p
+{"trace_id": "69fd3304d8614d17", "endpoint": "/ws/chat", "session_id": "ws-e52fc58a", "outcome": "client_disconnected", "ts": "2026-11-08T13:26:47+0530"}
+{"trace_id": "21e8337686fa49c3", "endpoint": "/ask", "session_id": "log1", "question": "My phone is [PHONE], what is the status of ticket TKT-0003?", "outcome": "answered", "grounded": true, "sources": [], "guard_fired": false, "review_approved": true, "pii_ma
+
+raw phone numbers found anywhere in the log file: NONE

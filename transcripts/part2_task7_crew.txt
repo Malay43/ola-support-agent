@@ -1,0 +1,24 @@
+====================================================================================================
+PART 2 - Task 7: CrewAI crew (Retrieval + Lookup + Composer) via .kickoff()
+====================================================================================================
+agent 'Retrieval Agent'      tools=['rag_lookup']
+agent 'Lookup Agent'         tools=['check_support_ticket_status']
+agent 'Response Composer'    tools=[]
+
+Q: How fast must we reply to a P1 ticket?
+   rag_lookup invoked 1x | check_support_ticket_status invoked 0x
+   [Retrieval Agent] RAG_RESULT: GROUNDED=True TOP_SCORE=0.795 SOURCES=kb-02 ANSWER: A P1 ticket gets a first response within 15 minutes and a resolution target of 4 hours, around the clock.
+   [Lookup Agent] NO_TICKET_ID: no ticket id in the question
+   [Response Composer] {"answer": "A P1 ticket gets a first response within 15 minutes and a resolution target of 4 hours, around the clock.", "sources": ["kb-02"], "ticket": null, "escalation_
+
+Q: What is the status of ticket TKT-0003?
+   rag_lookup invoked 0x | check_support_ticket_status invoked 1x
+   [Retrieval Agent] RAG_SKIPPED: no policy topic in the question
+   [Lookup Agent] LOOKUP_RESULT: {"found": true, "record_id": "TKT-0003", "status": "In Progress", "resolution_time_hours": 6.5, "escalation_score": 0.2533, "recommend_escalation": false, 
+   [Response Composer] {"answer": "Ticket TKT-0003 is currently In Progress (resolution time 6.5 hours). Its escalation score is 0.2533 (threshold 0.39), so no escalation is needed right now.",
+
+Q: Ticket TKT-0010: when does an agent need Tier 2 approval for a refund, and should it be escalated?
+   rag_lookup invoked 1x | check_support_ticket_status invoked 1x
+   [Retrieval Agent] RAG_RESULT: GROUNDED=True TOP_SCORE=0.685 SOURCES=kb-04,kb-03 ANSWER: An agent may approve a refund of up to 1,000 rupees alone, and anything higher needs Tier 2 approval
+   [Lookup Agent] LOOKUP_RESULT: {"found": true, "record_id": "TKT-0010", "status": "Resolved", "resolution_time_hours": 7.2, "escalation_score": 0.2933, "recommend_escalation": false, "th
+   [Response Composer] {"answer": "Ticket TKT-0010 is currently Resolved (resolution time 7.2 hours). Its escalation score is 0.2933 (threshold 0.39), so no escalation is needed right now. An a

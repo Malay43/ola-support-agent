@@ -1,0 +1,15 @@
+====================================================================================================
+PART 4 - Task 14: Autogen RoundRobinGroupChat review stage
+====================================================================================================
+
+A) clean draft -> should be APPROVED unchanged
+DRAFT : A refund for a wrongly charged fare goes back to the original payment method within 5 to 7 business days after approval.
+  [Policy_Compliance_Reviewer] REVIEW: APPROVE Every sentence is supported by the retrieved context.
+  [Final_Editor] approved=True final_answer='A refund for a wrongly charged fare goes back to the original payment method within 5 to 7 business days after approval.' reason='All claims are supported by the retrieved context; draft approved unchan
+VERDICT: {"approved":true,"final_answer":"A refund for a wrongly charged fare goes back to the original payment method within 5 to 7 business days after approval.","reason":"All claims are supported by the retrieved context; draft approved unchanged."}
+
+B) draft with an injected ungrounded claim -> should be REVISED
+DRAFT : A refund for a wrongly charged fare goes back to the original payment method within 5 to 7 business days after approval. Refunds above 5,000 rupees are paid instantly in cash.
+  [Policy_Compliance_Reviewer] REVIEW: REVISE UNSUPPORTED: Refunds above 5,000 rupees are paid instantly in cash.
+  [Final_Editor] approved=False final_answer='A refund for a wrongly charged fare goes back to the original payment method within 5 to 7 business days after approval.' reason='Removed 1 unsupported claim(s): Refunds above 5,000 rupees are paid ins
+VERDICT: {"approved":false,"final_answer":"A refund for a wrongly charged fare goes back to the original payment method within 5 to 7 business days after approval.","reason":"Removed 1 unsupported claim(s): Refunds above 5,000 rupees are paid instantly in cash."}

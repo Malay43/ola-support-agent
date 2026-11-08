@@ -1,0 +1,20 @@
+====================================================================================================
+PART 2 - Task 8: session memory (RunnableWithMessageHistory)
+====================================================================================================
+--- conversation A (state carried across turns) ---
+USER: What is the status of ticket TKT-0003?
+  resolved question -> 'What is the status of ticket TKT-0003?' (ticket carried from memory: None)
+  BOT: Ticket TKT-0003 is currently In Progress (resolution time 6.5 hours). Its escalation score is 0.2533 (threshold 0.39), so no escalation is needed right now.
+USER: Should it be escalated?
+  resolved question -> 'Should it be escalated? (this is about ticket TKT-0003)' (ticket carried from memory: TKT-0003)
+  BOT: Ticket TKT-0003 is currently In Progress (resolution time 6.5 hours). Its escalation score is 0.2533 (threshold 0.39), so no escalation is needed right now.
+USER: And how fast must we reply to a P1 ticket?
+  resolved question -> 'And how fast must we reply to a P1 ticket?' (ticket carried from memory: None)
+  BOT: A P1 ticket gets a first response within 15 minutes and a resolution target of 4 hours, around the clock.
+  [history now holds 6 messages]
+
+--- conversation B (fresh session: state must be ABSENT) ---
+USER: Should it be escalated?
+  resolved question -> 'Should it be escalated?' (ticket carried: None)
+  BOT: Please share the ticket id (for example TKT-0007) so I can look it up.
+  [history holds 2 messages]
