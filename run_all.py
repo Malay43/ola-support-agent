@@ -44,9 +44,8 @@ def main():
           f"CREWAI_DISABLE_TELEMETRY={config.os.environ['CREWAI_DISABLE_TELEMETRY']}  "
           f"OTEL_SDK_DISABLED={config.os.environ['OTEL_SDK_DISABLED']}")
     if config.REQUEST_LOG.exists():
-        config.REQUEST_LOG.unlink()  # fresh log for a clean demonstration
+        config.REQUEST_LOG.unlink()
 
-    # ------------------------------------------------------------------ PART 1
     with section("part1_dataset_rag", "PART 1 - Tasks 1-5: dataset, knowledge base, chunking, grounded generation, P/R"):
         import part1_demo
         RESULTS["part1"] = part1_demo.run()
@@ -59,7 +58,6 @@ def main():
     from rag import get_store, grounded_answer
     from schemas import SupportAnswer
 
-    # ------------------------------------------------------------------ PART 2
     with section("part2_task6_tool", "PART 2 - Task 6: check_support_ticket_status + designed escalation_score"):
         print(tools.escalation_justification(), "\n")
         escalated_id = next(r["record_id"] for r in dataset.SUPPORT_TICKETS if r["escalated"])
@@ -111,7 +109,7 @@ def main():
         ok = 0
         for q in ["What is the compensation cap for a poor experience?", "What is the status of ticket TKT-0007?",
                   "What is the capital of Australia?"]:
-            sa = run_crew(q)["answer"]  # run_crew validates in code: SupportAnswer.model_validate(...)
+            sa = run_crew(q)["answer"]
             ok += isinstance(sa, SupportAnswer)
             print(f"VALID  {sa.model_dump_json()[:230]}")
         try:
@@ -145,7 +143,6 @@ def main():
         assert g["fired"]
         RESULTS["task10"] = {"ok": True}
 
-    # ------------------------------------------------------------------ PART 3
     with section("part3_task11_api", "PART 3 - Task 11: FastAPI (HTTP + WebSocket, survives disconnect)"):
         from fastapi.testclient import TestClient
         from app import app
@@ -200,7 +197,6 @@ def main():
             print(f"  {r['n']:>2}. {r['question'][:80]}\n      -> {r['answer'][:160]}")
         RESULTS["task13"] = {k: res[k] for k in ("rows", "averages")}
 
-    # ------------------------------------------------------------------ PART 4
     with section("part4_task14_review", "PART 4 - Task 14: Autogen RoundRobinGroupChat review stage"):
         from guardrails import context_for
         from review import review_answer

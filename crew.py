@@ -72,7 +72,7 @@ def run_crew(question: str) -> dict:
     result = crew.kickoff()
 
     parsed = getattr(result, "pydantic", None)
-    if parsed is None:  # validate in code regardless (Task 9)
+    if parsed is None:
         raw = result.raw
         m = re.search(r"\{.*\}", raw, re.S)
         parsed = SupportAnswer.model_validate(json.loads(m.group(0)))

@@ -57,7 +57,7 @@ async def ws_chat(ws: WebSocket) -> None:
                 result.pop("_debug", None)
                 await ws.send_json(AskResponse(**result).model_dump())
             except (WebSocketDisconnect, RuntimeError):
-                raise  # socket gone while replying -> handled below
+                raise
             except Exception as e:  # one bad message must not kill the connection or the server
                 log_request({"trace_id": new_trace_id(), "endpoint": "/ws/chat", "session_id": session_id,
                              "outcome": "error", "error": type(e).__name__})
@@ -66,4 +66,4 @@ async def ws_chat(ws: WebSocket) -> None:
         log_request({"trace_id": new_trace_id(), "endpoint": "/ws/chat", "session_id": session_id,
                      "outcome": "client_disconnected"})
         from memory import clear_session
-        clear_session(session_id)  # free the abandoned session; the server keeps serving other clients
+        clear_session(session_id)

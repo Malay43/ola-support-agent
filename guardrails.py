@@ -5,7 +5,6 @@ from embeddings import tokens
 from mock_llm import FALLBACK, split_sentences
 from schemas import SupportAnswer
 
-# ------------------------------------------------------------------ PII masking
 # Fixed-format PII for the Ola track: Indian mobile numbers, with/without +91 / 91 / 0 prefix and
 # with spaces or dashes: 9876543210, +91 98765 43210, 98765-43210, 987-654-3210, 09876543210.
 # Rider/driver name, address and payment details are free text: out of scope for a keyless masker.
@@ -42,7 +41,6 @@ def mask_obj(obj):
     return obj
 
 
-# ------------------------------------------------------------------ prompt-injection detection
 _INJECTION_PATTERNS = {
     "ignore_previous_instructions": r"\b(ignore|disregard|forget|override)\b.{0,30}\b(previous|prior|above|earlier|all|your)\b.{0,30}\b(instructions?|prompts?|rules?|guidelines?|policies|context)\b",
     "reveal_system_prompt": r"\b(reveal|show|print|repeat|leak|display)\b.{0,25}\b(system|hidden|initial|secret)\b.{0,15}\b(prompt|instructions?|message)\b",
@@ -56,7 +54,6 @@ def detect_injection(text: str) -> list[str]:
     return [name for name, pat in _INJECTION_PATTERNS.items() if re.search(pat, text, re.I | re.S)]
 
 
-# ------------------------------------------------------------------ output-side groundedness
 SUPPORT_RATIO = 0.7  # a claim is supported if >=70% of its content tokens occur in ONE context sentence
 
 

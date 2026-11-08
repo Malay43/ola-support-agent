@@ -56,7 +56,6 @@ class MockReviewClient(ChatCompletionClient):
         self._usage = RequestUsage(prompt_tokens=0, completion_tokens=0)
         self.calls = 0
 
-    # ---- logic
     def _respond(self, messages: Sequence[LLMMessage], json_output) -> str:
         system = next((_text(m) for m in messages if m.type == "SystemMessage"), "")
         draft, context = _parse_task(messages)
@@ -65,7 +64,6 @@ class MockReviewClient(ChatCompletionClient):
             if bad:
                 return "REVIEW: REVISE\nUNSUPPORTED: " + " || ".join(bad)
             return "REVIEW: APPROVE\nEvery sentence is supported by the retrieved context."
-        # Final-Editor
         convo = "\n".join(_text(m) for m in messages if m.type == "UserMessage")
         revise = "REVIEW: REVISE" in convo
         if revise and bad:
@@ -78,7 +76,6 @@ class MockReviewClient(ChatCompletionClient):
                                     reason="All claims are supported by the retrieved context; draft approved unchanged.")
         return verdict.model_dump_json()
 
-    # ---- ChatCompletionClient interface
     async def create(self, messages: Sequence[LLMMessage], *, tools: Sequence[Tool | ToolSchema] = [],
                      tool_choice: Tool | Literal["auto", "required", "none"] = "auto",
                      json_output: Optional[bool | type[BaseModel]] = None,

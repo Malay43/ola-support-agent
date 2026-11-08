@@ -17,7 +17,6 @@ from mock_llm import FALLBACK, generate_grounded, split_sentences
 STRATEGIES = ("fixed", "sentence")
 
 
-# ----------------------------------------------------------------- chunkers
 def chunk_fixed(text: str, size: int = config.CHUNK_SIZE_CHARS, overlap: int = config.CHUNK_OVERLAP_CHARS):
     """Fixed-size windows with overlap, snapped to word boundaries. -> [(start, end, text)]"""
     out, start, n = [], 0, len(text)
@@ -61,7 +60,6 @@ class Hit:
     clean_end: bool = True    # chunk ends with sentence-final punctuation
 
 
-# ----------------------------------------------------------------- store
 class RagStore:
     def __init__(self, docs=None, embedder=None):
         self.docs = {d["doc_id"]: dict(d) for d in (docs or KB_DOCS)}
@@ -122,7 +120,6 @@ class RagStore:
             )
         return hits
 
-    # ---------------------------------------------------- calibration / eval
     def calibrate(self, in_scope: list[str] = None, out_of_scope: list[str] = None) -> dict:
         in_scope = in_scope or [q for q, _ in EVAL_QUERIES] + EXTRA_IN_SCOPE
         out_of_scope = out_of_scope or OUT_OF_SCOPE_QUERIES
@@ -157,7 +154,7 @@ class RagStore:
             rows = []
             for q, relevant in queries:
                 hits = self.retrieve(q, strat, k)
-                retrieved_docs = list(dict.fromkeys(h.doc_id for h in hits))  # map to parent docs + dedup
+                retrieved_docs = list(dict.fromkeys(h.doc_id for h in hits))
                 rel = set(relevant)
                 tp = len(rel & set(retrieved_docs))
                 p = tp / len(retrieved_docs) if retrieved_docs else 0.0
@@ -205,7 +202,6 @@ class RagStore:
             self.evaluate_chunking()
 
 
-# ----------------------------------------------------------------- query sets
 # (query, relevant parent docs)
 EVAL_QUERIES = [
     ("How fast must we reply to a P1 ticket?", ["kb-02"]),
@@ -230,7 +226,6 @@ OUT_OF_SCOPE_QUERIES = [
 ]
 
 
-# ----------------------------------------------------------------- grounded generation
 def usable_context(hit: Hit) -> str:
     """Drop sentence fragments created by fixed-size windows so the answer quotes whole sentences only."""
     sents = split_sentences(hit.text)

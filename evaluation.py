@@ -62,7 +62,7 @@ def mock_judge(prompt: str) -> str:
     is_refusal = answer.startswith("I don't know") or blocked
     a_tok = set(tokens(answer))
 
-    def scale(frac):  # fraction -> 1..5
+    def scale(frac):
         return round(1 + 4 * max(0.0, min(1.0, frac)), 2)
 
     if kind in ("out_of_scope", "injection"):

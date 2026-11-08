@@ -16,7 +16,7 @@ def test_dataset_meets_brief():
     assert all(s["per_category"][c] >= 3 for c in dataset.CATEGORIES)
     assert all(s["per_status"][st] >= 1 for st in dataset.STATUSES)
     assert 10 <= s["escalated_pct"] <= 30
-    assert dataset.generate_support_tickets() == dataset.SUPPORT_TICKETS  # deterministic
+    assert dataset.generate_support_tickets() == dataset.SUPPORT_TICKETS
 
 
 @pytest.mark.parametrize("text", ["9876543210", "+91 98765 43210", "98765-43210", "09876543210", "987-654-3210"])

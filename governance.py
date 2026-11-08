@@ -3,7 +3,6 @@ import contextvars
 
 import config
 
-# ------------------------------------------------------------------ Application layer
 # Least autonomy: each tool has exactly one role allowed to hold it.
 TOOL_POLICY: dict[str, set[str]] = {
     "check_support_ticket_status": {"Lookup Agent"},
@@ -31,7 +30,6 @@ RISK_JUSTIFICATION = (
     "detection, a per-request token budget, and a read-only tool that only the Lookup Agent may hold."
 )
 
-# ------------------------------------------------------------------ Runtime layer
 class BudgetExceeded(RuntimeError):
     pass
 

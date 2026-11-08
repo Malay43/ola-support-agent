@@ -46,9 +46,6 @@ def generate_grounded(question: str, contexts: list[str], max_sentences: int = 2
     return " ".join(s for _, s in sorted(keep, key=lambda p: p[0]))
 
 
-# =====================================================================================
-# CrewAI MOCK_LLM  (extends crewai.llms.base_llm.BaseLLM - CrewAI's documented extension point)
-# =====================================================================================
 TICKET_RE = re.compile(r"\bTKT-\d{4}\b", re.I)
 _LOOKUP_NOISE = {_stem(w) for w in "status ticket check tell show look lookup give find need want please escalate escalated escalation know phone mobile number contact call reach".split()}
 
@@ -156,7 +153,6 @@ try:
         def get_context_window_size(self) -> int:
             return 16000
 
-        # -- helpers
         @staticmethod
         def _norm(messages):
             if isinstance(messages, str):
@@ -182,7 +178,7 @@ try:
             obs = self._last_observation(msgs)
             question = _extract_question(first_user)
 
-            if not agent_tools:  # ---- Response Composer: no tools, builds the structured answer
+            if not agent_tools:
                 ctx = first_user.split("This is the context you're working with:", 1)[-1]
                 ctx = ctx.split("\n\nProvide your complete response", 1)[0]  # CrewAI's no-tools template suffix
                 parts = [p.strip() for p in ctx.split("----------")]  # CrewAI joins task outputs with this separator
@@ -190,7 +186,7 @@ try:
                 l_txt = next((p for p in parts if p.startswith(("LOOKUP_RESULT:", "NO_TICKET_ID"))), "")
                 payload = compose_structured_answer(question, r_txt.replace("RAG_RESULT:", "").strip(), l_txt)
                 out = "Thought: I now know the final answer\nFinal Answer: " + json.dumps(payload)
-            elif obs is not None:  # ---- a tool already ran: wrap its observation as the final answer
+            elif obs is not None:
                 label = "LOOKUP_RESULT" if any("record_id" in t["args"] for t in agent_tools) else "RAG_RESULT"
                 out = f"Thought: I now know the final answer\nFinal Answer: {label}: {obs}"
             else:  # ---- first step: choose a tool by its declared argument schema

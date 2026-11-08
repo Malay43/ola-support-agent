@@ -34,7 +34,7 @@ CATEGORY_MEDIAN_HOURS = {
 }
 RESOLUTION_HOURS_RANGE = (0.5, 96.0)
 BASE_ESCALATION_PROB = 0.06
-ESCALATION_BAND = (10.0, 30.0)  # required % band
+ESCALATION_BAND = (10.0, 30.0)
 
 
 def generate_support_tickets(seed: int = SEED, n: int = N_RECORDS) -> list[dict]:

@@ -54,7 +54,7 @@ def answer_question(raw_question: str, session_id: str = "default", endpoint: st
     masked, pii = mask_pii(raw_question)  # mask FIRST so even a rejected request is logged without raw PII
     try:
         try:
-            meter.check_input(raw_question)  # Runtime layer: reject oversized requests up-front
+            meter.check_input(raw_question)
         except governance.BudgetExceeded as e:
             return _blocked(trace_id, "budget_exceeded", str(e), t0, masked[:200] + " ...[truncated for log]", pii,
                             endpoint, session_id, {"tokens": meter.tokens})

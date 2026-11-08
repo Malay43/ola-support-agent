@@ -7,7 +7,6 @@ import dataset
 from cache import COUNTERS
 from rag import grounded_answer
 
-# ------------------------------------------------------------------ escalation score (Task 6)
 # escalation_score = 0.6 * escalated + 0.4 * (days_since_created / 30)
 #   * `escalated` (0/1) is the dominant signal: a ticket already flagged is far more urgent.
 #   * days/30 is the normalised age in [0,1]: an older ticket has had more time to breach SLA.
@@ -65,7 +64,6 @@ def check_support_ticket_status(record_id: str) -> dict:
     }
 
 
-# ------------------------------------------------------------------ CrewAI tool wrappers
 class _RagArgs(BaseModel):
     query: str = Field(..., description="The support-policy question to look up in the knowledge base")
 
